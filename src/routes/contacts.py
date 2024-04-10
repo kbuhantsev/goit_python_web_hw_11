@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.db import get_db
 from src.schemas.schemas import ContactSchema, ContactSchemaResponse
@@ -11,7 +12,7 @@ router = APIRouter(prefix='/contacts', tags=["contacts"])
 
 
 @router.get("/", response_model=List[ContactSchemaResponse])
-async def read_tags(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+async def read_tags(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)):
     tags = await contacts_tags.get_contacts(skip, limit, db)
     return tags
 

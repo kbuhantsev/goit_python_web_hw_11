@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, func, DateTime
+from sqlalchemy import Integer, String, func, Date, DateTime
 
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
@@ -17,4 +17,4 @@ class Contact(Base):
     surname: Mapped[str] = mapped_column(String(50), nullable=False)
     email: Mapped[str] = mapped_column(String(50), nullable=True)
     phone: Mapped[str] = mapped_column(String(50), nullable=True)
-    date_of_birth: Mapped[DateTime] = mapped_column(DateTime)
+    date_of_birth: Mapped[Date] = mapped_column(Date)

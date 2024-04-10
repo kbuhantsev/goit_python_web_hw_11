@@ -1,13 +1,16 @@
-from typing import List
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from src.database.models import Contact
 # from src.schemas.schemas import ContactSchema
 
 
-async def get_contacts(skip: int, limit: int, db: Session) -> List[Contact]:
-    return db.query(Contact).offset(skip).limit(limit).all()
+async def get_contacts(skip: int, limit: int, db: AsyncSession) -> [Contact]:
+    query = select(Contact).offset(skip).limit(limit)
+    res = await db.execute(query)
+    return res.scalars().all()
+
 
 # async def get_tags(skip: int, limit: int, db: Session) -> List[Tag]:
 #     return db.query(Tag).offset(skip).limit(limit).all()
