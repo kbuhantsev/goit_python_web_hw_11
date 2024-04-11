@@ -29,6 +29,11 @@ async def create_contact(body: ContactSchema, db: AsyncSession = Depends(get_ses
     return await contacts_repo.create_contact(body, db)
 
 
+@router.delete("/{contact_id}", response_model=ContactSchemaResponse)
+async def delete_contact(contact_id: int, db: AsyncSession = Depends(get_session)):
+    return await contacts_repo.delete_contact(contact_id, db)
+
+
 # @router.post("/", response_model=ContactSchemaResponse)
 # async def create_tag(body: TagModel, db: Session = Depends(get_db)):
 #     return await repository_tags.create_tag(body, db)

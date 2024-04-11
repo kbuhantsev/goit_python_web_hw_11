@@ -1,6 +1,6 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from src.database.models import Contact
 from src.schemas.schemas import ContactSchema
@@ -25,6 +25,21 @@ async def create_contact(contact: ContactSchema, db: AsyncSession) -> Contact:
     await db.commit()
 
     return contact
+
+
+async def update_contact(contact_id: int, contact: ContactSchema, db: AsyncSession) -> Contact:
+    pass
+
+
+async def delete_contact(contact_id: int, db: AsyncSession) -> Contact | None:
+    contact = await db.get(Contact, contact_id)
+    if contact:
+        await db.delete(contact)
+        await db.flush()
+        await db.commit()
+
+    return contact
+
 
 
 # async def get_tags(skip: int, limit: int, db: Session) -> List[Tag]:
