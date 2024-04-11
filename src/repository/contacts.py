@@ -1,4 +1,3 @@
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -8,6 +7,25 @@ from src.schemas.schemas import ContactSchema
 
 async def get_contacts(skip: int, limit: int, db: AsyncSession) -> [Contact]:
     query = select(Contact).offset(skip).limit(limit)
+    res = await db.execute(query)
+    return res.scalars().all()
+
+
+async def search_contacts(db: AsyncSession,
+                          name: str = None,
+                          surname: str = None,
+                          email: str = None,
+                          ) -> [Contact]:
+
+    params = {}
+    if name:
+        params['name'] = name
+    if surname:
+        params['surname'] = surname
+    if email:
+        params['email'] = email
+
+    query = select(Contact).filter_by(**params)
     res = await db.execute(query)
     return res.scalars().all()
 

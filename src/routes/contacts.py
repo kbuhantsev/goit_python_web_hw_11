@@ -12,7 +12,16 @@ router = APIRouter(prefix='/contacts', tags=["contacts"])
 
 @router.get("/", response_model=List[ContactSchemaResponse])
 async def get_contacts(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_session)):
-    tags = await contacts_repo.get_contacts(skip, limit, db)
+    contacts = await contacts_repo.get_contacts(skip, limit, db)
+    return contacts
+
+
+@router.get("/search", response_model=List[ContactSchemaResponse])
+async def search_contacts(name:str = None,
+                          surname:str = None,
+                          email:str = None,
+                          db: AsyncSession = Depends(get_session)):
+    tags = await contacts_repo.search_contacts(db, name, surname, email)
     return tags
 
 
@@ -43,3 +52,6 @@ async def delete_contact(contact_id: int, db: AsyncSession = Depends(get_session
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сontact not found!")
     return contact
+
+
+
