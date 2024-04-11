@@ -12,11 +12,17 @@ async def get_contacts(skip: int, limit: int, db: AsyncSession) -> [Contact]:
     return res.scalars().all()
 
 
+async def get_contact(contact_id: int, db: AsyncSession) -> Contact:
+    query = select(Contact).where(Contact.id == contact_id)
+    res = await db.execute(query)
+    return res.scalars().first()
+
+
 # async def get_tags(skip: int, limit: int, db: Session) -> List[Tag]:
 #     return db.query(Tag).offset(skip).limit(limit).all()
 #
 #
-# async def get_tag(tag_id: int, db: Session) -> Tag:
+# async def get_contact(tag_id: int, db: Session) -> Tag:
 #     return db.query(Tag).filter(Tag.id == tag_id).first()
 #
 #
