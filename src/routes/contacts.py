@@ -24,6 +24,11 @@ async def get_contact_by_id(contact_id: int, db: AsyncSession = Depends(get_sess
     return tag
 
 
+@router.post("/", response_model=ContactSchemaResponse)
+async def create_contact(body: ContactSchema, db: AsyncSession = Depends(get_session)):
+    return await contacts_repo.create_contact(body, db)
+
+
 # @router.post("/", response_model=ContactSchemaResponse)
 # async def create_tag(body: TagModel, db: Session = Depends(get_db)):
 #     return await repository_tags.create_tag(body, db)

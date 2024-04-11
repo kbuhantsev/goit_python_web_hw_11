@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from src.database.models import Contact
-# from src.schemas.schemas import ContactSchema
+from src.schemas.schemas import ContactSchema
 
 
 async def get_contacts(skip: int, limit: int, db: AsyncSession) -> [Contact]:
@@ -16,6 +16,15 @@ async def get_contact(contact_id: int, db: AsyncSession) -> Contact:
     query = select(Contact).where(Contact.id == contact_id)
     res = await db.execute(query)
     return res.scalars().first()
+
+
+async def create_contact(contact: ContactSchema, db: AsyncSession) -> Contact:
+    contact = Contact(**contact.dict())
+    db.add(contact)
+    await db.flush()
+    await db.commit()
+
+    return contact
 
 
 # async def get_tags(skip: int, limit: int, db: Session) -> List[Tag]:
