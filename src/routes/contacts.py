@@ -18,10 +18,10 @@ async def get_contacts(skip: int = 0, limit: int = 100, db: AsyncSession = Depen
 
 @router.get("/{contact_id}", response_model=ContactSchemaResponse)
 async def get_contact_by_id(contact_id: int, db: AsyncSession = Depends(get_session)):
-    tag = await contacts_repo.get_contact(contact_id, db)
-    if tag is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found")
-    return tag
+    contact = await contacts_repo.get_contact(contact_id, db)
+    if contact is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сontact not found!")
+    return contact
 
 
 @router.post("/", response_model=ContactSchemaResponse)
@@ -29,27 +29,17 @@ async def create_contact(body: ContactSchema, db: AsyncSession = Depends(get_ses
     return await contacts_repo.create_contact(body, db)
 
 
+@router.put("/{contact_id}", response_model=ContactSchemaResponse)
+async def put_contact(body: ContactSchema, contact_id: int, db: AsyncSession = Depends(get_session)):
+    contact = await contacts_repo.update_contact(contact_id, body, db)
+    if contact is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сontact not found!")
+    return contact
+
+
 @router.delete("/{contact_id}", response_model=ContactSchemaResponse)
 async def delete_contact(contact_id: int, db: AsyncSession = Depends(get_session)):
-    return await contacts_repo.delete_contact(contact_id, db)
-
-
-# @router.post("/", response_model=ContactSchemaResponse)
-# async def create_tag(body: TagModel, db: Session = Depends(get_db)):
-#     return await repository_tags.create_tag(body, db)
-#
-#
-# @router.put("/{tag_id}", response_model=ContactSchemaResponse)
-# async def update_tag(body: TagModel, tag_id: int, db: Session = Depends(get_db)):
-#     tag = await repository_tags.update_tag(tag_id, body, db)
-#     if tag is None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found")
-#     return tag
-#
-#
-# @router.delete("/{tag_id}", response_model=ContactSchemaResponse)
-# async def remove_tag(tag_id: int, db: Session = Depends(get_db)):
-#     tag = await repository_tags.remove_tag(tag_id, db)
-#     if tag is None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found")
-#     return tag
+    contact = await contacts_repo.delete_contact(contact_id, db)
+    if contact is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сontact not found!")
+    return contact

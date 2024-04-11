@@ -1,6 +1,6 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import select
 
 from src.database.models import Contact
 from src.schemas.schemas import ContactSchema
@@ -27,8 +27,17 @@ async def create_contact(contact: ContactSchema, db: AsyncSession) -> Contact:
     return contact
 
 
-async def update_contact(contact_id: int, contact: ContactSchema, db: AsyncSession) -> Contact:
-    pass
+async def update_contact(contact_id: int, contact: ContactSchema, db: AsyncSession) -> Contact | None:
+    contact_db = await db.get(Contact, contact_id)
+    if contact_db:
+        dump = contact.model_dump(exclude_unset=True)
+        for key in dump:
+            setattr(contact_db, key, dump[key])
+
+        await db.commit()
+        await db.refresh(contact_db)
+
+    return contact_db
 
 
 async def delete_contact(contact_id: int, db: AsyncSession) -> Contact | None:
@@ -39,36 +48,3 @@ async def delete_contact(contact_id: int, db: AsyncSession) -> Contact | None:
         await db.commit()
 
     return contact
-
-
-
-# async def get_tags(skip: int, limit: int, db: Session) -> List[Tag]:
-#     return db.query(Tag).offset(skip).limit(limit).all()
-#
-#
-# async def get_contact(tag_id: int, db: Session) -> Tag:
-#     return db.query(Tag).filter(Tag.id == tag_id).first()
-#
-#
-# async def create_tag(body: TagModel, db: Session) -> Tag:
-#     tag = Tag(name=body.name)
-#     db.add(tag)
-#     db.commit()
-#     db.refresh(tag)
-#     return tag
-#
-#
-# async def update_tag(tag_id: int, body: TagModel, db: Session) -> Tag | None:
-#     tag = db.query(Tag).filter(Tag.id == tag_id).first()
-#     if tag:
-#         tag .name = body.name
-#         db.commit()
-#     return tag
-#
-#
-# async def remove_tag(tag_id: int, db: Session)  -> Tag | None:
-#     tag = db.query(Tag).filter(Tag.id == tag_id).first()
-#     if tag:
-#         db.delete(tag)
-#         db.commit()
-#     return tag
